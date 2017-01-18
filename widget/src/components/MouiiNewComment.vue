@@ -1,0 +1,210 @@
+<template>
+  <transition name="mouii-new-comment">
+    <!-- <form class="mouii-new-comment" v-if="show" v-bind:class="{ 'mouii-new-comment__focused': focusStatus }" v-on:submit.prevent="submitNewComment"> -->
+    <form class="mouii-new-comment" v-bind:class="{ 'mouii-new-comment__focused': focusStatus }" v-on:submit.prevent="submitNewComment">
+      <textarea class="mouii-new-comment__textarea" placeholder="Say something..." rows="4" v-model.trim="content" v-on:focus="focus.content = true" v-on:blur="focus.content = false">
+      </textarea><div class="mouii-new-comment__field">
+        <div class="mouii-userinfo-input">
+          <i class="fa fa-user"></i>
+          <input class="mouii-userinfo-field__username" type="text" placeholder="Username" v-model.trim="name" v-on:focus="focus.name = true" v-on:blur="focus.name = false">
+        </div>
+        <div class="mouii-userinfo-input">
+          <i class="fa fa-envelope"></i>
+          <input class="mouii-userinfo-field__email" type="email" placeholder="Email" v-model.trim="email" v-on:focus="focus.email = true" v-on:blur="focus.email = false">
+        </div>
+        <div class="mouii-userinfo-input">
+          <i class="fa fa-home"></i>
+          <input class="mouii-userinfo-field__website" type="text" placeholder="Website (optinal)" v-model.trim="website" v-on:focus="focus.website = true" v-on:blur="focus.website = false">
+        </div>
+        <button type="submit" class="mouii-new-comment__submit">
+          <i class="fa fa-arrow-right"></i>
+        </button>
+      </div>
+    </form>
+  </transition>
+</template>
+
+<script>
+// import { mapState } from 'vuex'
+
+export default {
+  name: 'mouii-new-comment',
+  // props: ['post', 'parent', 'show', 'auto-hide'],
+  data () {
+    return {
+      name: 'Robin Wong',
+      email: 'chaowang0313@qq.com',
+      website: 'https://rwong.cc/',
+      content: 'Test',
+      focus: {
+        content: false,
+        name: false,
+        email: false,
+        website: false
+      }
+    }
+  },
+  computed: {
+    focusStatus () {
+      if (this.focus.content || this.focus.name || this.focus.email || this.focus.website) {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
+  methods: {
+    check () {
+      // Ugly
+      var required = /\S+/
+
+      var protocol = '(?:(?:[a-z]+:)?//)'
+      var auth = '(?:\\S+(?::\\S*)?@)?'
+      var ip = '(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])(?:\\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])){3}'
+      var host = '(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)'
+      var domain = '(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*'
+      var tld = '(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))\\.?'
+      var port = '(?::\\d{2,5})?'
+      var path = '(?:[/?#][^\\s"]*)?'
+      var regex = `(?:${protocol}|www\\.)${auth}(?:localhost|${ip}|${host}${domain}${tld})${port}${path}`
+      var url = new RegExp(`(?:^${regex}$)`, 'i')
+
+      if (!required.test(this.name) || !required.test(this.email) || !required.test(this.content)) {
+        return '用户名、邮箱以及评论内容都是必填的喔。'
+      }
+      if (required.test(this.website) && !url.test(this.website)) {
+        return '请输入一个正常的 URL（不要省略开头的 http(s):// 喔）'
+      }
+    },
+    submitNewComment (event) {
+      var errors = this.check()
+      if (!errors) {
+        /* mouii.alertShow = false
+        mouii.alert = ({
+          type: 'info',
+          content: ['发表中...']
+        })
+        mouii.alertShow = true */
+
+        this.$http.post(
+          'http://localhost:3000/mouii/new',
+          {
+            post: this.$store.state.post,
+            name: this.name,
+            email: this.email,
+            website: this.website,
+            content: this.content,
+            parent: this.parent
+          }
+        ).then((res) => {
+          return res.json()
+        }).then((res) => {
+          /* if (res.status === 'error') {
+            return Parse.Promise.error(res.error)
+          } else { */
+          this.content = ''
+          this.$store.dispatch('fetchComments')
+        }).catch((comment, error) => {
+          /* mouii.alert = ({
+            type: 'warning',
+            content: ['Failed to save a new comment, with error code: ' + error.message],
+            autoClose: 8000
+          })
+          mouii.alertShow = true */
+          console.error(error)
+        })
+      } else {
+        console.log(errors)
+        /* mouii.alertShow = false
+        mouii.alert = {
+          type: 'warning',
+          content: errors
+        }
+        mouii.alertShow = true */
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+.mouii-new-comment {
+	transition: .5s;
+	color: #475669;
+	border: 1px solid #c0ccda;
+	border-radius: .25rem;
+	height: calc(10rem + 2px);
+}
+.mouii-new-comment__focused {
+	border-color: #20A0FF;
+}
+.mouii-new-comment__textarea {
+	display: block;
+	width: 100%;
+	height: 7.5rem;
+	border: none;
+	resize: none;
+	padding: .75rem .75rem 0 .75rem;
+	color: #475669;
+	background: none;
+	border-radius: .25rem 0 0 .25rem;
+}
+.mouii-new-comment__textarea:focus {
+	border-color: #20A0FF;
+}
+
+.mouii-new-comment__field {
+	display: flex;
+	background: white;
+	border-bottom-left-radius: .25rem;
+	border-bottom-right-radius: .25rem;
+}
+.mouii-userinfo-input {
+	flex: 1;
+	position: relative;
+}
+.mouii-userinfo-input input {
+	min-width: 0;
+	border: none;
+	display: block;
+	padding: .5rem  .75rem .5rem 2.125rem;
+	color: #475669;
+	width: 100%;
+	height: 100%;
+	background: transparent;
+}
+.mouii-userinfo-input:not(:last-child) {
+	border-right-width: 1px;
+	border-right-style: solid;
+	border-image: linear-gradient(to bottom, transparent, transparent .25rem, #c0ccda .75rem, #c0ccda 1.75rem, transparent 2.25rem) 1 100%;
+}
+.mouii-userinfo-input i {
+	position: absolute;
+	left: .375rem;
+	top: .625rem;
+	width: 1.5rem;
+	height: 1.5rem;
+	line-height: 1.5rem;
+	color: #475669;
+	text-align: center;
+}
+#mouii .mouii-new-comment__submit {
+	width: 2.5rem;
+	height: 2.5rem;
+	color: #475669;
+	transition: .25s;
+	outline: none;
+	border-bottom-right-radius: .25rem;
+}
+#mouii .mouii-new-comment__submit:hover,
+#mouii .mouii-new-comment__submit:focus {
+	background-color: #475669;
+	color: #F9FAFC
+}
+#mouii .mouii-new-comment__submit:hover {
+	width: 5rem;
+}
+#mouii .mouii-new-comment__submit:active {
+	box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+}
+</style>

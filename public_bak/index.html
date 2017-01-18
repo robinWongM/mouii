@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/mouii.css">
+	<title>多曰</title>
+</head>
+<body>
+
+<div id="mouii">
+  <div class="mouii-list">
+    <p v-if="count == null">Loading...</p>
+    <p v-else-if="count != 0">We now have {{ count }} comment(s).</p>
+    <p v-else>There are no comment.</p>
+    <transition-group name="mouii-swipe">
+      <mouii-comment v-if="comments.length != 0" v-for="comment in comments" v-bind:comment="comment" v-bind:key="comment.id" v-bind:post="post"></mouii-comment>
+    </transition-group>
+  </div>
+  <mouii-new-comment v-bind:style="{ marginTop: '4rem' }" v-bind:post="post" v-bind:show="true"></mouii-new-comment>
+  <mouii-alert v-bind:alert="alert" v-bind:show="alertShow" v-on:show="setAlertShow"></mouii-alert>
+
+</div>
+
+
+<button onclick="addComment()">Add Comment</button>
+
+<!--<script type="text/javascript" src="//cdn.bootcss.com/parse/1.9.2/parse.min.js"></script>-->
+
+<script type="text/javascript" src="assets/js/vue.js"></script>
+<script src="parse.js"></script>
+
+<script type="text/x-template" id="mouii-new-comment-template">
+  <transition name="mouii-new-comment">
+    <form class="mouii-new-comment" v-if="show" v-bind:class="{ 'mouii-new-comment__focused': focusStatus }" v-on:submit.prevent="submitNewComment">
+      <textarea class="mouii-new-comment__textarea" placeholder="Say something..." rows="4" v-model.trim="content" v-on:focus="focus.content = true" v-on:blur="focus.content = false">
+      </textarea><div class="mouii-new-comment__field">
+        <div class="mouii-userinfo-input">
+          <i class="fa fa-user"></i>
+          <input class="mouii-userinfo-field__username" type="text" placeholder="Username" v-model.trim="nickname" v-on:focus="focus.nickname = true" v-on:blur="focus.nickname = false">
+        </div>
+        <div class="mouii-userinfo-input">
+          <i class="fa fa-envelope"></i>
+          <input class="mouii-userinfo-field__email" type="email" placeholder="Email" v-model.trim="email" v-on:focus="focus.email = true" v-on:blur="focus.email = false">
+        </div>
+        <div class="mouii-userinfo-input">
+          <i class="fa fa-home"></i>
+          <input class="mouii-userinfo-field__website" type="text" placeholder="Website (optinal)" v-model.trim="website" v-on:focus="focus.website = true" v-on:blur="focus.website = false">
+        </div>
+        <button type="submit" class="mouii-new-comment__submit">
+          <i class="fa fa-arrow-right"></i>
+        </button>
+      </div>
+    </form>
+  </transition>
+</script>
+
+<script type="text/x-template" id="mouii-comment-template">
+  <div class="mouii-comment" v-bind:style="{ marginLeft: comment.sequence + 'rem' }">
+    <div class="mouii-comment__avatar">
+      <a v-bind:href="comment.website ? comment.website : null">
+        <img v-bind:src="'https://cn.gravatar.com/avatar/' + comment.email" />
+      </a>
+    </div>
+    <div class="mouii-comment__info">
+      <span class="mouii-comment__author">{{ comment.nickname }}</span>
+      <span class="mouii-comment__time" v-bind:title="comment.time.toLocaleString()">{{ formatTime }}</span>
+      <a class="mouii-comment__reply" v-on:click="toggleReply">Reply</a>
+    </div>
+    <div class="mouii-comment__content" v-bind:class="{ 'mouii-comment__content--line': !isReplyOpen }">{{ comment.content }}</div>
+    <mouii-new-comment v-bind:post="post" v-bind:parent="comment.id" v-bind:show="isReplyOpen" v-on:submitted="closeNewComment"></mouii-new-comment>
+  </div>
+</script>
+
+<script type="text/x-template" id="mouii-alert-template">
+  <transition name="mouii-swipe">
+    <div class="mouii-alert" v-if="show" v-bind:class="'mouii-alert--' + alert.type">
+        <div class="mouii-alert__content" v-for="content in alert.content" v-bind:key="content">{{ content }}</div>
+      <a class="mouii-alert__close fa fa-times" v-on:click="close"><!--<i class="fa fa-times"></i>--></a>
+    </div>
+  </transition>
+</script>
+
+<script type="text/javascript" src="assets/js/mouii.js"></script>
+</body>
+</html>

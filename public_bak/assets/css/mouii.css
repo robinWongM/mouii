@@ -1,0 +1,226 @@
+body {
+	color: #324057;
+	font-size: 15px;
+}
+
+#mouii {
+	width: 90%;
+	max-width: 760px; /* For development */
+	margin: 2.5rem auto;
+}
+
+#mouii ::-moz-placeholder {
+	opacity: 1;
+	color: #99A9BF;
+}
+
+#mouii button {
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	text-transform: none;
+	text-decoration: none;
+	overflow: hidden;
+	display: inline-block;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	background-image: none;
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+}
+#mouii button:active::-moz-focus-inner {
+	padding: 0;
+	border: 0;
+}
+#mouii button:active {
+	border-style: outset;
+	border: none;
+}
+
+.mouii-new-comment {
+	transition: .5s;
+	color: #475669;
+	border: 1px solid #c0ccda;
+	border-radius: .25rem;
+	height: calc(10rem + 2px);
+}
+.mouii-new-comment__focused {
+	border-color: #20A0FF;
+}
+.mouii-new-comment__textarea {
+	display: block;
+	width: 100%;
+	height: 7.5rem;
+	border: none;
+	resize: none;
+	padding: .75rem .75rem 0 .75rem;
+	color: #475669;
+	background: none;
+	border-radius: .25rem 0 0 .25rem;
+}
+.mouii-new-comment__textarea:focus {
+	border-color: #20A0FF;
+}
+
+.mouii-new-comment__field {
+	display: flex;
+	background: white;
+	border-bottom-left-radius: .25rem;
+	border-bottom-right-radius: .25rem;
+}
+.mouii-userinfo-input {
+	flex: 1;
+	position: relative;
+}
+.mouii-userinfo-input input {
+	min-width: 0;
+	border: none;
+	display: block;
+	padding: .5rem  .75rem .5rem 2.125rem;
+	color: #475669;
+	width: 100%;
+	height: 100%;
+	background: transparent;
+}
+.mouii-userinfo-input:not(:last-child) {
+	border-right-width: 1px;
+	border-right-style: solid;
+	border-image: linear-gradient(to bottom, transparent, transparent .25rem, #c0ccda .75rem, #c0ccda 1.75rem, transparent 2.25rem) 1 100%;
+}
+.mouii-userinfo-input i {
+	position: absolute;
+	left: .375rem;
+	top: .625rem;
+	width: 1.5rem;
+	height: 1.5rem;
+	line-height: 1.5rem;
+	color: #475669;
+	text-align: center;
+}
+#mouii .mouii-new-comment__submit {
+	width: 2.5rem;
+	height: 2.5rem;
+	color: #475669;
+	transition: .25s;
+	outline: none;
+	border-bottom-right-radius: .25rem;
+}
+#mouii .mouii-new-comment__submit:hover,
+#mouii .mouii-new-comment__submit:focus {
+	background-color: #475669;
+	color: #F9FAFC
+}
+#mouii .mouii-new-comment__submit:hover {
+	width: 5rem;
+}
+#mouii .mouii-new-comment__submit:active {
+	box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+}
+
+.mouii-list {
+	margin-top: 100px;
+}
+.mouii-comment {
+	position: relative;
+	padding: 1rem .5rem 0 4.5rem;
+}
+
+.mouii-comment__avatar {
+	position: absolute;
+	top: 1.25rem;
+	left: .5rem;
+}
+.mouii-comment__avatar img {
+	width: 3rem;
+	height: 3rem;
+	border-radius: 50%;
+}
+
+.mouii-comment__info {
+	margin-bottom: .25rem;
+}
+.mouii-comment__info span, .mouii-comment__info a {
+	display: inline-block;
+	margin-right: .75rem;
+}
+.mouii-comment__author {
+	font-weight: bold;
+}
+.mouii-comment__time {
+	font-size: .75rem;
+	color: #99A9BF;
+}
+.mouii-comment__reply {
+	font-size: .75rem;
+	cursor: pointer;
+}
+
+.mouii-comment__content {
+	padding: 0 0 1rem 0;
+	border-bottom: 1px solid transparent;
+	transition: .5s;
+}
+.mouii-comment__content--line {
+	border-bottom: 1px solid #D3DCE6;
+}
+
+
+.mouii-alert {
+	position: fixed;
+	bottom: 0;
+	width: 90%;
+	margin: 0 auto;
+	max-width: 760px;
+	padding: 1rem 3rem 1rem 1.5rem;
+	border: 1px solid currentcolor;
+	transform: translateY(0);
+}
+.mouii-alert--info {
+	background-color: #d3ecff;
+	color: #0092ff;
+	box-shadow: 0 -3px 100px #86cbff;
+}
+.mouii-alert--warning {
+	background-color: #fdf2d6;
+	color: #D88900;
+	box-shadow: 0 -3px 100px #fdda8c;
+}
+.mouii-alert--success {
+	background-color: #ccfae1;
+	color: #18a556;
+	box-shadow: 0 -3px 100px #86f4b7;
+}
+.mouii-alert__close {
+	position: absolute;
+	right: 1.5em;
+	top: 1rem;
+	line-height: 1.5rem;
+	cursor: pointer;
+}
+.mouii-alert div {
+	transition: .5s;
+}
+
+.mouii-fade-enter-active, .mouii-fade-leave-active {
+  transition: .5s;
+}
+.mouii-fade-enter, .mouii-fade-leave-active {
+  opacity: 0;
+}
+.mouii-swipe-enter-active, .mouii-swipe-leave-active {
+  transition: .5s;
+  transform: translateY(0);
+}
+.mouii-swipe-enter, .mouii-swipe-leave-active {
+  opacity: 0;
+  transform: translateY(100%);
+  box-shadow: none;
+}
+.mouii-new-comment-enter-active, .mouii-new-comment-leave-active {
+  transition: .5s;
+  height: calc(10rem + 2px)
+}
+.mouii-new-comment-enter, .mouii-new-comment-leave-active {
+  opacity: 0;
+  height: 0;
+}
