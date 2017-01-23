@@ -126,10 +126,18 @@ router.post('/new', function(req, res, next) {
     })
   })
   .then(function(comment) {
+    var md5 = crypto.createHash('md5')
     res.status(200).send({
       code: 0,
       message: {
-        id: comment._id
+        id: comment._id,
+        parent: comment.parent,
+        thread: comment.thread,
+        name: comment.name,
+        email: md5.update(comment.email).digest('hex'),
+        website: comment.website,
+        content: comment.content,
+        time: comment.createdAt
       }
     })
   })

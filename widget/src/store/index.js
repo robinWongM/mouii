@@ -8,14 +8,18 @@ export default new Vuex.Store({
   state: {
     post: null,
     count: null,
-    comments: []
+    comments: [],
+    loaded: false
   },
   mutations: {
     update (state, [post, count, comments]) {
       state.post = post
       state.count = count
       state.comments = comments
-      console.log(state.count)
+      state.loaded = true
+    },
+    addComment (state, [comment, index]) {
+      state.comments.splice(index + 1, 0, comment)
     }
   },
   actions: {
@@ -38,7 +42,10 @@ export default new Vuex.Store({
         ])
       })
       .catch((error) => {
-        console.error(error)
+        if (!context.state.loaded) {
+          // Inital Load
+          console.log(error)
+        }
       })
     }
   },

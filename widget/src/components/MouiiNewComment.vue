@@ -1,35 +1,41 @@
 <template>
   <transition name="mouii-new-comment">
-    <!-- <form class="mouii-new-comment" v-if="show" v-bind:class="{ 'mouii-new-comment__focused': focusStatus }" v-on:submit.prevent="submitNewComment"> -->
-    <form class="mouii-new-comment" v-bind:class="{ 'mouii-new-comment__focused': focusStatus }" v-on:submit.prevent="submitNewComment">
-      <textarea class="mouii-new-comment__textarea" placeholder="Say something..." rows="4" v-model.trim="content" v-on:focus="focus.content = true" v-on:blur="focus.content = false">
-      </textarea><div class="mouii-new-comment__field">
-        <div class="mouii-userinfo-input">
-          <i class="fa fa-user"></i>
-          <input class="mouii-userinfo-field__username" type="text" placeholder="Username" v-model.trim="name" v-on:focus="focus.name = true" v-on:blur="focus.name = false">
+    <div class="mouii-new-comment" v-if="show">
+      <form class="mouii-new-comment__form" v-bind:class="{ 'mouii-new-comment__focused': focusStatus }"  v-on:submit.prevent="submitNewComment">
+        <textarea class="mouii-new-comment__textarea" placeholder="Say something..." rows="4" v-model.trim="content" v-on:focus="focus.content = true" v-on:blur="focus.content = false">
+        </textarea><div class="mouii-new-comment__field">
+          <div class="mouii-userinfo-input">
+            <mouii-icon class="mouii-icon-with-input" name="user"></mouii-icon>
+            <input class="mouii-userinfo-field__username" type="text" placeholder="Username" v-model.trim="name" v-on:focus="focus.name = true" v-on:blur="focus.name = false">
+          </div>
+          <div class="mouii-userinfo-input">
+            <mouii-icon class="mouii-icon-with-input" name="email"></mouii-icon>
+            <input class="mouii-userinfo-field__email" type="email" placeholder="Email" v-model.trim="email" v-on:focus="focus.email = true" v-on:blur="focus.email = false">
+          </div>
+          <div class="mouii-userinfo-input">
+            <mouii-icon class="mouii-icon-with-input" name="website"></mouii-icon>
+            <input class="mouii-userinfo-field__website" type="text" placeholder="Website (optinal)" v-model.trim="website" v-on:focus="focus.website = true" v-on:blur="focus.website = false">
+          </div>
+          <button type="submit" class="mouii-button mouii-new-comment__submit">
+            <mouii-icon name="arrow_forward"></mouii-icon>
+          </button>
         </div>
-        <div class="mouii-userinfo-input">
-          <i class="fa fa-envelope"></i>
-          <input class="mouii-userinfo-field__email" type="email" placeholder="Email" v-model.trim="email" v-on:focus="focus.email = true" v-on:blur="focus.email = false">
-        </div>
-        <div class="mouii-userinfo-input">
-          <i class="fa fa-home"></i>
-          <input class="mouii-userinfo-field__website" type="text" placeholder="Website (optinal)" v-model.trim="website" v-on:focus="focus.website = true" v-on:blur="focus.website = false">
-        </div>
-        <button type="submit" class="mouii-new-comment__submit">
-          <i class="fa fa-arrow-right"></i>
-        </button>
+      </form>
+      <div class="mouii-new-comment__overlay">
       </div>
-    </form>
+    </div>
   </transition>
 </template>
 
 <script>
-// import { mapState } from 'vuex'
+import MouiiIcon from './MouiiIcon'
 
 export default {
   name: 'mouii-new-comment',
-  // props: ['post', 'parent', 'show', 'auto-hide'],
+  components: {
+    MouiiIcon
+  },
+  props: ['show', 'parent'],
   data () {
     return {
       name: 'Robin Wong',
@@ -94,16 +100,19 @@ export default {
             email: this.email,
             website: this.website,
             content: this.content,
-            parent: this.parent
+            parent: this.parent ? this.parent.id : null
           }
         ).then((res) => {
           return res.json()
         }).then((res) => {
-          /* if (res.status === 'error') {
-            return Parse.Promise.error(res.error)
-          } else { */
-          this.content = ''
-          this.$store.dispatch('fetchComments')
+          if (res.code !== 0) {
+            throw res.message
+          } else {
+            this.content = ''
+            this.$store.commit('addComment', [res.message, this.parent ? this.parent.index : -1])
+            this.$emit('submitted')
+          }
+          // this.$store.dispatch('fetchComments')
         }).catch((comment, error) => {
           /* mouii.alert = ({
             type: 'warning',
@@ -127,13 +136,20 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .mouii-new-comment {
 	transition: .5s;
 	color: #475669;
-	border: 1px solid #c0ccda;
-	border-radius: .25rem;
 	height: calc(10rem + 2px);
+  position: relative;
+  transform: perspective(1600px) rotateX(45deg);
+  transform-style: preserve-3d;
+  transform-origin: 50% 50% 50%;
+  backface-visibility: hidden;
+}
+.mouii-new-comment__form {
+  border: 1px solid #c0ccda;
+  background-color: white;
 }
 .mouii-new-comment__focused {
 	border-color: #20A0FF;
@@ -144,7 +160,7 @@ export default {
 	height: 7.5rem;
 	border: none;
 	resize: none;
-	padding: .75rem .75rem 0 .75rem;
+	padding: 1rem .75rem 0 .75rem;
 	color: #475669;
 	background: none;
 	border-radius: .25rem 0 0 .25rem;
@@ -206,5 +222,27 @@ export default {
 }
 #mouii .mouii-new-comment__submit:active {
 	box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+}
+
+.mouii-new-comment__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  background-color: #475669;
+  transform: rotateX(180deg) rotateY(180deg);
+  z-index: -1;
+  text-align: center;
+}
+
+.mouii-new-comment-enter-active, .mouii-new-comment-leave-active {
+  transition: .5s;
+  height: calc(10rem + 2px)
+}
+.mouii-new-comment-enter, .mouii-new-comment-leave-active {
+  opacity: 0;
+  height: 0;
 }
 </style>

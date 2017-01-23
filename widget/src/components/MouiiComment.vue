@@ -7,16 +7,16 @@
     </div>
     <div class="mouii-comment__info">
       <span class="mouii-comment__author">{{ comment.name }}</span>
-      <span class="mouii-comment__time" v-bind:title="comment.time.toLocaleString()">{{ formatTime }}</span>
+      <span class="mouii-comment__time" v-bind:title="comment.time.toLocaleString()">{{ formatTime() }}</span>
       <a class="mouii-comment__reply" v-on:click="toggleReply">Reply</a>
     </div>
     <div class="mouii-comment__content" v-bind:class="{ 'mouii-comment__content--line': !isReplyOpen }">{{ comment.content }}</div>
-    <!-- <mouii-new-comment v-bind:post="post" v-bind:parent="comment.id" v-bind:show="isReplyOpen" v-on:submitted="closeNewComment"></mouii-new-comment> -->
+    <mouii-new-comment v-bind:parent="{id: comment.id, index: index}" v-bind:show="isReplyOpen" v-on:submitted="closeNewComment"></mouii-new-comment>
   </div>
 </template>
 
 <script>
-// import MouiiNewComment from './MouiiNewComment'
+import MouiiNewComment from './MouiiNewComment'
 
 function formatTime (time) {
   var msPerMinute = 60 * 1000
@@ -43,20 +43,18 @@ function formatTime (time) {
 export default {
   name: 'mouii-comment',
   components: {
-    // MouiiNewComment
+    MouiiNewComment
   },
-  props: ['comment', 'post'],
+  props: ['comment', 'index'],
   data () {
     return {
       isReplyOpen: false
     }
   },
-  computed: {
-    formatTime: function () {
-      return formatTime(this.comment.time)
-    }
-  },
   methods: {
+    formatTime () {
+      return formatTime(this.comment.time)
+    },
     toggleReply () {
       this.isReplyOpen = !this.isReplyOpen
     },
@@ -68,7 +66,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .mouii-comment {
 	position: relative;
 	padding: 1rem .5rem 0 4.5rem;

@@ -4,8 +4,7 @@
     <p v-else-if="count != 0">We now have {{ count }} comment(s).</p>
     <p v-else>There are no comment.</p>
     <transition-group name="mouii-swipe">
-      <!--<mouii-comment v-if="comments.length != 0" v-for="comment in comments" v-bind:comment="comment" v-bind:key="comment.id" v-bind:post="post"></mouii-comment>-->
-      <mouii-comment v-if="comments.length != 0" v-for="comment in comments" v-bind:comment="comment" v-bind:key="comment.id"></mouii-comment>
+      <mouii-comment v-if="comments.length != 0" v-for="(comment, index) in comments" v-bind:comment="comment" v-bind:index="index" v-bind:key="comment.id"></mouii-comment>
     </transition-group>
   </div>
 </template>
@@ -23,12 +22,19 @@ export default {
     'post',
     'count',
     'comments'
-  ])
+  ]),
+  watch: {
+    comments (val) {
+      for (var i = 0; i <= val.length - 1; i++) {
+        val[i].sequence = val[i].thread.split('.').length - 1
+      }
+    }
+  }
 }
 </script>
 
-<style scoped>
+<style>
 .mouii-list {
-	margin-top: 100px;
+	margin: 4rem 0;
 }
 </style>
