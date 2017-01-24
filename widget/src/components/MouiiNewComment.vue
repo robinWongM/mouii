@@ -1,27 +1,38 @@
 <template>
-  <transition name="mouii-new-comment">
-    <div class="mouii-new-comment" v-if="show">
-      <form class="mouii-new-comment__form" v-bind:class="{ 'mouii-new-comment__focused': focusStatus }"  v-on:submit.prevent="submitNewComment">
-        <textarea class="mouii-new-comment__textarea" placeholder="Say something..." rows="4" v-model.trim="content" v-on:focus="focus.content = true" v-on:blur="focus.content = false">
-        </textarea><div class="mouii-new-comment__field">
-          <div class="mouii-userinfo-input">
-            <mouii-icon class="mouii-icon-with-input" name="user"></mouii-icon>
-            <input class="mouii-userinfo-field__username" type="text" placeholder="Username" v-model.trim="name" v-on:focus="focus.name = true" v-on:blur="focus.name = false">
+  <transition name="mouii-new-comment" mode="out-in">
+    <div class="mouii-new-comment__wrap" v-if="show">
+      <div class="mouii-new-comment" v-bind:class="{ 'mouii-new-comment--flip': status !== 'nothing' }">
+        <form class="mouii-new-comment__form" v-bind:class="{ 'mouii-new-comment__focused': focusStatus }"  v-on:submit.prevent="submitNewComment">
+          <textarea class="mouii-new-comment__textarea" placeholder="Say something..." rows="4" v-model.trim="content" v-on:focus="focus.content = true" v-on:blur="focus.content = false">
+          </textarea><div class="mouii-new-comment__field">
+            <div class="mouii-userinfo-input">
+              <mouii-icon class="mouii-icon-with-input" name="user"></mouii-icon>
+              <input class="mouii-userinfo-field__username" type="text" placeholder="Username" v-model.trim="name" v-on:focus="focus.name = true" v-on:blur="focus.name = false">
+            </div>
+            <div class="mouii-userinfo-input">
+              <mouii-icon class="mouii-icon-with-input" name="email"></mouii-icon>
+              <input class="mouii-userinfo-field__email" type="email" placeholder="Email" v-model.trim="email" v-on:focus="focus.email = true" v-on:blur="focus.email = false">
+            </div>
+            <div class="mouii-userinfo-input">
+              <mouii-icon class="mouii-icon-with-input" name="website"></mouii-icon>
+              <input class="mouii-userinfo-field__website" type="text" placeholder="Website (optinal)" v-model.trim="website" v-on:focus="focus.website = true" v-on:blur="focus.website = false">
+            </div>
+            <button type="submit" class="mouii-button mouii-new-comment__submit">
+              <mouii-icon class="mouii-icon-with-submit" name="arrow_forward"></mouii-icon>
+            </button>
           </div>
-          <div class="mouii-userinfo-input">
-            <mouii-icon class="mouii-icon-with-input" name="email"></mouii-icon>
-            <input class="mouii-userinfo-field__email" type="email" placeholder="Email" v-model.trim="email" v-on:focus="focus.email = true" v-on:blur="focus.email = false">
-          </div>
-          <div class="mouii-userinfo-input">
-            <mouii-icon class="mouii-icon-with-input" name="website"></mouii-icon>
-            <input class="mouii-userinfo-field__website" type="text" placeholder="Website (optinal)" v-model.trim="website" v-on:focus="focus.website = true" v-on:blur="focus.website = false">
-          </div>
-          <button type="submit" class="mouii-button mouii-new-comment__submit">
-            <mouii-icon name="arrow_forward"></mouii-icon>
-          </button>
-        </div>
-      </form>
-      <div class="mouii-new-comment__overlay">
+        </form>
+        <div class="mouii-new-comment__overlay">
+          <transition name="mouii-new-comment__status" mode="out-in">
+            <div v-if="status !== 'submitted'" class="mouii-new-comment__overlay-container" key="bounce">
+              <mouii-loading class="mouii-new-comment__overlay-bounce"></mouii-loading>
+            </div>
+            <div v-else class="mouii-new-comment__overlay-container" key="tip">
+              <p class="mouii-new-comment__overlay-tip">
+                <mouii-icon name="check" class="mouii-new-comment__overlay-tip__check"></mouii-icon>
+              </p>
+            </div>
+          </transition>
       </div>
     </div>
   </transition>
@@ -29,17 +40,19 @@
 
 <script>
 import MouiiIcon from './MouiiIcon'
+import MouiiLoading from './MouiiLoading'
 
 export default {
   name: 'mouii-new-comment',
   components: {
-    MouiiIcon
+    MouiiIcon,
+    MouiiLoading
   },
   props: ['show', 'parent'],
   data () {
     return {
       name: 'Robin Wong',
-      email: 'chaowang0313@qq.com',
+      email: 'chaowang0313@gmail.com',
       website: 'https://rwong.cc/',
       content: 'Test',
       focus: {
@@ -47,7 +60,8 @@ export default {
         name: false,
         email: false,
         website: false
-      }
+      },
+      status: 'nothing'
     }
   },
   computed: {
@@ -85,6 +99,7 @@ export default {
     submitNewComment (event) {
       var errors = this.check()
       if (!errors) {
+        this.status = 'submitting'
         /* mouii.alertShow = false
         mouii.alert = ({
           type: 'info',
@@ -109,8 +124,12 @@ export default {
             throw res.message
           } else {
             this.content = ''
+            this.status = 'submitted'
             this.$store.commit('addComment', [res.message, this.parent ? this.parent.index : -1])
-            this.$emit('submitted')
+            setTimeout(() => {
+              this.status = 'nothing'
+              this.$emit('submitted')
+            }, 1500)
           }
           // this.$store.dispatch('fetchComments')
         }).catch((comment, error) => {
@@ -140,16 +159,23 @@ export default {
 .mouii-new-comment {
 	transition: .5s;
 	color: #475669;
-	height: calc(10rem + 2px);
+
   position: relative;
-  transform: perspective(1600px) rotateX(45deg);
-  transform-style: preserve-3d;
-  transform-origin: 50% 50% 50%;
-  backface-visibility: hidden;
+  /* transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  backface-visibility: hidden; */
+  overflow: hidden;
+}
+.mouii-new-comment--flip > .mouii-new-comment__overlay {
+  transform: translateY(0);
+}
+.mouii-new-comment__wrap {
+  overflow: hidden;
 }
 .mouii-new-comment__form {
   border: 1px solid #c0ccda;
   background-color: white;
+  transition: .25s;
 }
 .mouii-new-comment__focused {
 	border-color: #20A0FF;
@@ -163,7 +189,6 @@ export default {
 	padding: 1rem .75rem 0 .75rem;
 	color: #475669;
 	background: none;
-	border-radius: .25rem 0 0 .25rem;
 }
 .mouii-new-comment__textarea:focus {
 	border-color: #20A0FF;
@@ -183,26 +208,30 @@ export default {
 	min-width: 0;
 	border: none;
 	display: block;
-	padding: .5rem  .75rem .5rem 2.125rem;
+	padding: .5rem  .25rem .5rem 2.125rem;
 	color: #475669;
 	width: 100%;
 	height: 100%;
 	background: transparent;
 }
 .mouii-userinfo-input:not(:last-child) {
-	border-right-width: 1px;
+	/* border-right-width: 1px;
 	border-right-style: solid;
-	border-image: linear-gradient(to bottom, transparent, transparent .25rem, #c0ccda .75rem, #c0ccda 1.75rem, transparent 2.25rem) 1 100%;
+	border-image: linear-gradient(to bottom, transparent, transparent .25rem, #c0ccda .75rem, #c0ccda 1.75rem, transparent 2.25rem) 1 100%; */
 }
-.mouii-userinfo-input i {
+.mouii-icon-with-input {
 	position: absolute;
 	left: .375rem;
 	top: .625rem;
-	width: 1.5rem;
-	height: 1.5rem;
-	line-height: 1.5rem;
+	width: 1rem;
+	height: 1rem;
+	line-height: 1rem;
 	color: #475669;
 	text-align: center;
+}
+.mouii-icon-with-submit {
+  width: 1rem;
+  height: 1rem;
 }
 #mouii .mouii-new-comment__submit {
 	width: 2.5rem;
@@ -210,7 +239,6 @@ export default {
 	color: #475669;
 	transition: .25s;
 	outline: none;
-	border-bottom-right-radius: .25rem;
 }
 #mouii .mouii-new-comment__submit:hover,
 #mouii .mouii-new-comment__submit:focus {
@@ -232,17 +260,53 @@ export default {
   height: 100%;
   color: #fff;
   background-color: #475669;
-  transform: rotateX(180deg) rotateY(180deg);
-  z-index: -1;
   text-align: center;
+  line-height: 10rem;
+  transform: translateY(100%);
+  transition: .5s;
+}
+.mouii-new-comment__overlay-container {
+  height: 100%;
+}
+.mouii-new-comment__overlay-bounce, .mouii-new-comment__overlay-tip {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%)
+}
+.mouii-new-comment__overlay-tip__check {
+  width: 3rem;
+  height: 3rem;
 }
 
-.mouii-new-comment-enter-active, .mouii-new-comment-leave-active {
+.mouii-new-comment-enter-active,  .mouii-new-comment-leave-active {
   transition: .5s;
-  height: calc(10rem + 2px)
+  height: calc(10rem + 2px);
 }
-.mouii-new-comment-enter, .mouii-new-comment-leave-active {
-  opacity: 0;
+.mouii-new-comment-enter,  .mouii-new-comment-leave-to {
   height: 0;
+}
+.mouii-new-comment-enter-active > .mouii-new-comment,
+ .mouii-new-comment-leave-active > .mouii-new-comment {
+   transition: .25s;
+   transform: translateY(0);
+   opacity: 1;
+}
+.mouii-new-comment-enter > .mouii-new-comment,
+.mouii-new-comment-leave-to > .mouii-new-comment {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+.mouii-new-comment__status-enter-active, .mouii-new-comment__status-leave-active {
+  transition: .25s;
+  transform: scale(1);
+}
+.mouii-new-comment__status-enter-active > .,
+ .mouii-new-comment__status-leave-active {
+  transition: .25s;
+  transform: scale(1);
+}
+.mouii-new-comment__status-enter, .mouii-new-comment__status-leave-to {
+  transform: scale(0);
 }
 </style>
