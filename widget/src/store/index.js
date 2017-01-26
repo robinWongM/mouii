@@ -1,10 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import createPersistedState from 'vuex-persistedstate'
+import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
+import newComment from './modules/newComment'
+
 export default new Vuex.Store({
+  modules: {
+    newComment
+  },
   state: {
     post: null,
     count: null,
@@ -49,10 +54,13 @@ export default new Vuex.Store({
       })
     }
   },
-  strict: process.env.NODE_ENV !== 'production'/* ,
+  strict: process.env.NODE_ENV !== 'production',
   plugins: [
     createPersistedState({
-      key: 'mouii_0_1_0'
+      key: 'mouii_0_1_0',
+      paths: [
+        'newComment'
+      ]
     })
-  ] */
+  ]
 })

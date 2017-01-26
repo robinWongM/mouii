@@ -5,8 +5,8 @@ const state = {
 }
 
 const mutations = {
-  update (type, value) {
-    this.state[type] = value
+  newComment_update (state, obj) {
+    state[obj.field] = obj.value
   }
 }
 

@@ -42,6 +42,20 @@
 import MouiiIcon from './MouiiIcon'
 import MouiiLoading from './MouiiLoading'
 
+function mouiiFormVuex (field) {
+  return {
+    get () {
+      return this.$store.state.newComment[field]
+    },
+    set (value) {
+      this.$store.commit('newComment_update', {
+        field: field,
+        value: value
+      })
+    }
+  }
+}
+
 export default {
   name: 'mouii-new-comment',
   components: {
@@ -51,9 +65,6 @@ export default {
   props: ['show', 'parent'],
   data () {
     return {
-      name: '',
-      email: '',
-      website: '',
       content: '',
       focus: {
         content: false,
@@ -65,6 +76,9 @@ export default {
     }
   },
   computed: {
+    name: mouiiFormVuex('name'),
+    email: mouiiFormVuex('email'),
+    website: mouiiFormVuex('website'),
     focusStatus () {
       if (this.focus.content || this.focus.name || this.focus.email || this.focus.website) {
         return true

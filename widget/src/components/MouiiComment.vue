@@ -110,6 +110,7 @@ export default {
 .mouii-comment__content {
 	padding: 0 0 1rem 0;
 	border-bottom: 1px solid transparent;
+  white-space: pre-line;
 	transition: .5s;
 }
 .mouii-comment__content--line {
