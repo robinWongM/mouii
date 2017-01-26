@@ -15,7 +15,11 @@ const webSiteValidator = {
     var regex = `(?:${protocol}|www\\.)${auth}(?:localhost|${ip}|${host}${domain}${tld})${port}${path}`;
     var url = new RegExp(`(?:^${regex}$)`, 'i');
 
-    return url.test(v)
+    if (!v) {
+      return true
+    } else {
+      return url.test(v)
+    }
   },
   message: 'Your website says it is 404 NOT FOUND.'
 }
