@@ -2,7 +2,7 @@
   <div class="mouii-comment" v-bind:style="{ marginLeft: comment.sequence + 'rem' }">
     <div class="mouii-comment__avatar">
       <a v-bind:href="comment.website ? comment.website : null">
-        <img v-bind:src="'https://cn.gravatar.com/avatar/' + comment.email" />
+        <img v-bind:src="'https://g.shansing.net/' + comment.email" />
       </a>
     </div>
     <div class="mouii-comment__info">
