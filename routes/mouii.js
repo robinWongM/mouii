@@ -36,7 +36,7 @@ router.get('/list', function(req, res, next) {
     return Promise.all([
       Promise.resolve(post),
       Promise.resolve(count),
-      Comment.find({ post: post._id }).select('-post -updatedAt -__v').sort('thread').exec()
+      Comment.find({ post: post._id }).select('-post -updatedAt -__v').sort('thread_asc').exec()
     ])
   })
   .then(function([post, count, comments]) {
@@ -46,7 +46,7 @@ router.get('/list', function(req, res, next) {
       outputComments[i] = {}
       outputComments[i].id = comments[i]._id
       outputComments[i].parent = comments[i].parent
-      outputComments[i].thread = comments[i].thread
+      outputComments[i].thread = comments[i].thread_asc
       outputComments[i].name = comments[i].name
       outputComments[i].email = md5.update(comments[i].email).digest('hex')
       outputComments[i].website = comments[i].website
@@ -92,26 +92,21 @@ router.post('/new', function(req, res, next) {
     return Promise.all([
       Promise.resolve(post),
       Promise.resolve(parent),
-      Comment.findOne({ parent: parent }).sort("-thread").exec()
+      Comment.findOne({ parent: parent }).sort("-thread_desc").exec()
     ])
   })
   .then(function([post, parent, brother]) {
-    console.log('NEW COMMENT!!!')
-    console.log(post)
-    console.log(parent)
-    console.log(brother)
     if (!brother) {
       // I am the FIRST child!
-      console.log('I am the FIRST child!')
       var level = "00";
       if (!parent) {
         // AND I AM BABA!
         var thread = [];
       } else {
-        var thread = parent.thread.slice(0, -1).split(".");
+        var thread = parent.thread_asc.split(".");
       }
     } else {
-      var thread = brother.thread.slice(0, -1).split(".");
+      var thread = brother.thread_asc.split(".");
       var level = comment_increment_alphadecimal(thread.pop());
     }
 
@@ -120,7 +115,8 @@ router.post('/new', function(req, res, next) {
     return Comment.create({
       post: post._id,
       parent: parent ? parent._id : null,
-      thread: thread.join(".") + "/",
+      thread_asc: thread.join("."),
+      thread_desc: thread.join(".") + "/",
 
       name: req.body.name,
       email: req.body.email,
@@ -135,7 +131,7 @@ router.post('/new', function(req, res, next) {
       message: {
         id: comment._id,
         parent: comment.parent,
-        thread: comment.thread,
+        thread: comment.thread_asc,
         name: comment.name,
         email: md5.update(comment.email).digest('hex'),
         website: comment.website,
