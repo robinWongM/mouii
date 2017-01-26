@@ -39,7 +39,7 @@ var CommentSchema = new mongoose.Schema({
   thread_desc: {
     type: String,
     required: [true, '要找准自己的人生定位，不能盲从他人的脚步。']
-  }
+  },
 
   name: {
     type: String,
