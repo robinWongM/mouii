@@ -1,5 +1,5 @@
 <template>
-  <div class="mouii-comment" v-bind:style="{ marginLeft: comment.sequence + 'rem' }">
+  <div class="mouii-comment" v-bind:style="{ marginLeft: sequence + 'rem' }">
     <div class="mouii-comment__avatar">
       <a v-bind:href="comment.website ? comment.website : null">
         <img v-bind:src="'https://g.shansing.net/' + comment.email" />
@@ -49,6 +49,11 @@ export default {
   data () {
     return {
       isReplyOpen: false
+    }
+  },
+  computed: {
+    sequence () {
+      return this.comment.thread.split('.').length - 1
     }
   },
   methods: {

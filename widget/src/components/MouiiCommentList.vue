@@ -22,14 +22,7 @@ export default {
     'post',
     'count',
     'comments'
-  ]),
-  watch: {
-    comments (val) {
-      for (var i = 0; i <= val.length - 1; i++) {
-        val[i].sequence = val[i].thread.split('.').length - 1
-      }
-    }
-  }
+  ])
 }
 </script>
 
