@@ -25,7 +25,7 @@ export default new Vuex.Store({
   actions: {
     fetchComments (context) {
       Vue.http.get(
-        'http://localhost:3000/mouii/list',
+        '/mouii/list',
         {
           params: {
             url: document.location.pathname

@@ -51,10 +51,10 @@ export default {
   props: ['show', 'parent'],
   data () {
     return {
-      name: 'Robin Wong',
-      email: 'chaowang0313@gmail.com',
-      website: 'https://rwong.cc/',
-      content: 'Test',
+      name: '',
+      email: '',
+      website: '',
+      content: '',
       focus: {
         content: false,
         name: false,
@@ -108,7 +108,7 @@ export default {
         mouii.alertShow = true */
 
         this.$http.post(
-          'http://localhost:3000/mouii/new',
+          '/mouii/new',
           {
             post: this.$store.state.post,
             name: this.name,
