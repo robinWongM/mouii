@@ -96,19 +96,22 @@ router.post('/new', function(req, res, next) {
     ])
   })
   .then(function([post, parent, brother]) {
+    console.log('NEW COMMENT!!!')
     console.log(post)
+    console.log(parent)
+    console.log(brother)
     if (!brother) {
       // I am the FIRST child!
+      console.log('I am the FIRST child!')
       var level = "00";
       if (!parent) {
         // AND I AM BABA!
         var thread = [];
       } else {
-        var thread = parent.thread.trimRight("/").split(".");
+        var thread = parent.thread.slice(0, -1).split(".");
       }
     } else {
-      console.log("here5");
-      var thread = brother.thread.trimRight("/").split(".");
+      var thread = brother.thread.slice(0, -1).split(".");
       var level = comment_increment_alphadecimal(thread.pop());
     }
 
