@@ -3,17 +3,17 @@
     <div class="mouii-new-comment__wrap" v-if="show">
       <div class="mouii-new-comment" v-bind:class="{ 'mouii-new-comment--flip': status !== 'nothing' }">
         <form class="mouii-new-comment__form" v-bind:class="{ 'mouii-new-comment__focused': focusStatus }"  v-on:submit.prevent="submitNewComment">
-          <textarea class="mouii-new-comment__textarea" placeholder="Say something..." rows="4" v-model.trim="content" v-on:focus="focus.content = true" v-on:blur="focus.content = false">
-          </textarea><div class="mouii-new-comment__field">
-            <div class="mouii-userinfo-input">
+          <textarea class="mouii-new-comment__textarea" placeholder="Say something..." rows="4" v-model.trim="content" v-on:focus="focus.content = true" v-on:blur="focus.content = false"></textarea>
+          <div class="mouii-new-comment__field" v-bind:class="{ 'mouii-new-comment__field--focused': fieldFocusStatus }">
+            <div class="mouii-userinfo-input" v-bind:class="{ 'mouii-userinfo-input--focus': focus.name }">
               <mouii-icon class="mouii-icon-with-input" name="user"></mouii-icon>
               <input class="mouii-userinfo-field__username" type="text" placeholder="Username" v-model.trim="name" v-on:focus="focus.name = true" v-on:blur="focus.name = false">
             </div>
-            <div class="mouii-userinfo-input">
+            <div class="mouii-userinfo-input" v-bind:class="{ 'mouii-userinfo-input--focus': focus.email }">
               <mouii-icon class="mouii-icon-with-input" name="email"></mouii-icon>
               <input class="mouii-userinfo-field__email" type="email" placeholder="Email" v-model.trim="email" v-on:focus="focus.email = true" v-on:blur="focus.email = false">
             </div>
-            <div class="mouii-userinfo-input">
+            <div class="mouii-userinfo-input" v-bind:class="{ 'mouii-userinfo-input--focus': focus.website }">
               <mouii-icon class="mouii-icon-with-input" name="website"></mouii-icon>
               <input class="mouii-userinfo-field__website" type="text" placeholder="Website (optinal)" v-model.trim="website" v-on:focus="focus.website = true" v-on:blur="focus.website = false">
             </div>
@@ -81,6 +81,13 @@ export default {
     website: mouiiFormVuex('website'),
     focusStatus () {
       if (this.focus.content || this.focus.name || this.focus.email || this.focus.website) {
+        return true
+      } else {
+        return false
+      }
+    },
+    fieldFocusStatus () {
+      if (this.focus.name || this.focus.email || this.focus.website) {
         return true
       } else {
         return false
@@ -214,19 +221,27 @@ export default {
 	border-bottom-left-radius: .25rem;
 	border-bottom-right-radius: .25rem;
 }
+@media (max-width: 768px) {
+  .mouii-new-comment__field {
+    flex-direction: column;
+  }
+}
 .mouii-userinfo-input {
-	flex: 1;
+	flex: 1 1 2.5rem;
 	position: relative;
+  padding: 0;
+  transition: .5s;
 }
 .mouii-userinfo-input input {
 	min-width: 0;
 	border: none;
 	display: block;
-	padding: .5rem  .25rem .5rem 2.125rem;
+	padding: .5rem  .375rem .5rem 2.25rem;
 	color: #475669;
 	width: 100%;
 	height: 100%;
 	background: transparent;
+  transition: .5s;
 }
 .mouii-userinfo-input:not(:last-child) {
 	/* border-right-width: 1px;
@@ -235,20 +250,22 @@ export default {
 }
 .mouii-icon-with-input {
 	position: absolute;
-	left: .375rem;
-	top: .625rem;
+	left: 0;
+	top: .75rem;
 	width: 1rem;
 	height: 1rem;
 	line-height: 1rem;
 	color: #475669;
 	text-align: center;
+  transform: translate(.75rem, 0);
+  transition: .5s;
 }
 .mouii-icon-with-submit {
   width: 1rem;
   height: 1rem;
 }
 #mouii .mouii-new-comment__submit {
-	width: 2.5rem;
+	flex: 0 0 2.5rem;
 	height: 2.5rem;
 	color: #475669;
 	transition: .25s;
@@ -259,11 +276,37 @@ export default {
 	background-color: #475669;
 	color: #F9FAFC
 }
-#mouii .mouii-new-comment__submit:hover {
-	width: 5rem;
-}
 #mouii .mouii-new-comment__submit:active {
 	box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+}
+
+@media (min-width: 769px) {
+  .mouii-userinfo-input {
+    flex-basis: 5rem;
+  }
+  .mouii-new-comment__field--focused .mouii-userinfo-input:not(.mouii-userinfo-input--focus) .mouii-icon-with-input {
+    transform: translate(1.5rem, 0);
+  }
+  .mouii-new-comment__field--focused .mouii-userinfo-input:not(.mouii-userinfo-input--focus) input {
+    padding: .5rem  .375rem;
+    opacity: .25;
+  }
+  .mouii-userinfo-input::after {
+    content: '';
+    position: absolute;
+    display: block;
+    background-color: #C0CCDA;
+    right: 0;
+    top: .5rem;
+    width: 1px;
+    height: 1.5rem;
+  }
+  .mouii-userinfo-input--focus {
+    flex-basis: 100%;
+  }
+  #mouii .mouii-new-comment__submit:hover {
+    flex-basis: 5rem;
+  }
 }
 
 .mouii-new-comment__overlay {

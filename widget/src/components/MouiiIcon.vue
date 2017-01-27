@@ -32,11 +32,4 @@ export default {
   stroke: currentColor;
   fill: currentColor;
 }
-.mouii-icon-with-input {
-  position: absolute;
-  left: .65rem;
-  top: .75rem;
-  line-height: 1.5rem;
-  text-align: center;
-}
 </style>
