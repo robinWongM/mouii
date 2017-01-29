@@ -15,7 +15,7 @@
             </div>
             <div class="mouii-userinfo-input" v-bind:class="{ 'mouii-userinfo-input--focus': focus.website }">
               <mouii-icon class="mouii-icon-with-input" name="website"></mouii-icon>
-              <input class="mouii-userinfo-field__website" type="text" placeholder="Website (optinal)" v-model.trim="website" v-on:focus="focus.website = true" v-on:blur="focus.website = false">
+              <input class="mouii-userinfo-field__website" type="text" placeholder="Website (optional)" v-model.trim="website" v-on:focus="focus.website = true" v-on:blur="focus.website = false">
             </div>
             <button type="submit" class="mouii-button mouii-new-comment__submit">
               <mouii-icon class="mouii-icon-with-submit" name="arrow_forward"></mouii-icon>
@@ -178,7 +178,7 @@ export default {
 
 <style>
 .mouii-new-comment {
-	transition: .5s;
+	/* transition: .5s; */
 	color: #475669;
 
   position: relative;
@@ -221,13 +221,8 @@ export default {
 	border-bottom-left-radius: .25rem;
 	border-bottom-right-radius: .25rem;
 }
-@media (max-width: 768px) {
-  .mouii-new-comment__field {
-    flex-direction: column;
-  }
-}
 .mouii-userinfo-input {
-	flex: 1 1 2.5rem;
+	flex: 1 0 2.5rem;
 	position: relative;
   padding: 0;
   transition: .5s;
@@ -236,7 +231,7 @@ export default {
 	min-width: 0;
 	border: none;
 	display: block;
-	padding: .5rem  .375rem .5rem 2.25rem;
+	padding: .5rem  .75rem .5rem 2.25rem;
 	color: #475669;
 	width: 100%;
 	height: 100%;
@@ -279,33 +274,32 @@ export default {
 #mouii .mouii-new-comment__submit:active {
 	box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
 }
+.mouii-userinfo-input::after {
+  content: '';
+  position: absolute;
+  display: block;
+  background-color: #C0CCDA;
+  right: 0;
+  top: .5rem;
+  width: 1px;
+  height: 1.5rem;
+}
+.mouii-userinfo-input--focus {
 
-@media (min-width: 769px) {
-  .mouii-userinfo-input {
-    flex-basis: 5rem;
+}
+#mouii .mouii-new-comment__submit:hover {
+  flex-basis: 5rem;
+}
+@media (max-width: 768px) {
+  .mouii-new-comment__field--focused .mouii-userinfo-input:not(.mouii-userinfo-input--focus) {
+    flex: 0 0 2.5rem;
   }
   .mouii-new-comment__field--focused .mouii-userinfo-input:not(.mouii-userinfo-input--focus) .mouii-icon-with-input {
-    transform: translate(1.5rem, 0);
+    /* transform: translate(2rem, 0); */
   }
   .mouii-new-comment__field--focused .mouii-userinfo-input:not(.mouii-userinfo-input--focus) input {
-    padding: .5rem  .375rem;
-    opacity: .25;
-  }
-  .mouii-userinfo-input::after {
-    content: '';
-    position: absolute;
-    display: block;
-    background-color: #C0CCDA;
-    right: 0;
-    top: .5rem;
-    width: 1px;
-    height: 1.5rem;
-  }
-  .mouii-userinfo-input--focus {
-    flex-basis: 100%;
-  }
-  #mouii .mouii-new-comment__submit:hover {
-    flex-basis: 5rem;
+    padding: .5rem .75rem;
+    opacity: 0;
   }
 }
 
@@ -337,7 +331,7 @@ export default {
 }
 
 .mouii-new-comment-enter-active,  .mouii-new-comment-leave-active {
-  transition: .5s;
+  /* transition: .5s; */
   height: calc(10rem + 2px);
 }
 .mouii-new-comment-enter,  .mouii-new-comment-leave-to {
@@ -345,7 +339,7 @@ export default {
 }
 .mouii-new-comment-enter-active > .mouii-new-comment,
  .mouii-new-comment-leave-active > .mouii-new-comment {
-   transition: .25s;
+   /* transition: .25s; */
    transform: translateY(0);
    opacity: 1;
 }
